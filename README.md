@@ -1,7 +1,7 @@
 # Analisis de Clientes en Empresa de Telecomunicaciones
 El siguiente proyecto se desarrollo en el marco del Curso de Data Analytics de CoderHouse.
 
-<img align="right" width="1000" height = "600" alt="Inicio" src="https://github.com/ramirodelavega/Analisis-De-Clientes/assets/140906094/9c2ff713-cfb7-4b32-84ef-b1bbcc19cc1e">
+<img width="1000" alt="Inicio 1" src="https://github.com/ramirodelavega/Analisis-De-Clientes/assets/140906094/cf57dceb-4239-416d-b729-00f9a7427d5b">
 
 ---
 
@@ -352,14 +352,31 @@ Servicios[StreamingMovies] = "Yes")))
 
 # Dashboard
 
+El dashboard creado en Power Bi para la representación y análisis de los datos cuenta con cinco solapas, Inicio, Glosario, Clientes, Facturación y Análisis de Servicios.. La primera,solapa Inicio, consta de el título del proyecto, un navegador de páginas o solapas y una breve descripción de lo que se busca representar en el tablero.
+
+<img width="685" alt="Inicio 1" src="https://github.com/ramirodelavega/Analisis-De-Clientes/assets/140906094/5fd86c9f-ee5f-493b-b5b3-5962f8f03033">
+
+En la solapa Glosario se definen algunas variables o medidas que pueden prestarse a confusión.
+
+<img width="685" alt="Glosario 1" src="https://github.com/ramirodelavega/Analisis-De-Clientes/assets/140906094/0af0ced8-0e09-4cf1-b280-8182ffd2db0c">
 
 
+En la solapa Clientes se busca analizar las características de los clientes de la empresa. Al igual que la solapa Facturación, cuenta en la parte superior con un análisis general con diferentes indicadores que muestran Clientes Totales, Suma de Cargos Totales y Mensuales de todos los clientes, y Riesgo Abandono, en cantidad de clientes y de manera porcentual. La parte inferior se divide en dos recuadros. Uno en donde se representan lascaracterísticas de los clientes y otro recuadro en donde se muestran los reclamos realizados por los mismos, con opción de aplicar filtros. Además en la parte lateral derecha se encuentran la sección de filtros generales, que se repite también en los apartados Facturación y Análisis de servicios.
 
+<img width="685" alt="Clientes 1" src="https://github.com/ramirodelavega/Analisis-De-Clientes/assets/140906094/4a18d881-27d5-41bb-b83e-5c8f070093e8">
 
+Por su parte en la solapa Facturacion, ademas de los elementos ya descriptos anteriormente, se puede observar un analisis detallado de los tipos de contrato, metodos de pago, promedios de cargos y cargos segun el tipo de contrato. Siempre con posible interaccion con los filtros o segmentadores. 
 
+<img width="685" alt="Facturacion" src="https://github.com/ramirodelavega/Analisis-De-Clientes/assets/140906094/cdc742b6-036f-4f13-a53f-c9e407b1d0c7">
 
+Por último en la solapa, llamada Análisis de Servicios, se muestra una representación de los servicios que tienen contratados los clientes, con la opción de filtrarlos mediante tres segmentadores de datos.
 
+<img width="685" alt="servicios 1" src="https://github.com/ramirodelavega/Analisis-De-Clientes/assets/140906094/99905e92-0c8c-4a3f-87cf-a66731065697">
 
+---
+
+# Futuras Líneas
+Algunas iniciativas o mejoras que pueden llevarse a cabo sobre este proyecto son, la incorporación de mayor cantidad de filtros para un análisis más exhaustivo y minucioso de la información, claramente dependiendo de la información que se quiera obtener.
 
 
 
