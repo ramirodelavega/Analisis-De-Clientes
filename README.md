@@ -5,7 +5,6 @@ El siguiente proyecto se desarrollo en el marco del Curso de Data Analytics de C
 
 ---
 
-
 # Tabla de Contenidos
 
 1. [Descripción](https://github.com/ramirodelavega/Analisis-De-Clientes#Descripción)
@@ -20,7 +19,6 @@ El siguiente proyecto se desarrollo en el marco del Curso de Data Analytics de C
 10. [Medidas](https://github.com/ramirodelavega/Analisis-De-Clientes#Medidas)
 11. [Dashboard](https://github.com/ramirodelavega/Analisis-De-Clientes#Dashboard)
 12. [Futuras Líneas](https://github.com/ramirodelavega/Analisis-De-Clientes#Futuras-Líneas)
-
 
 
 ---
@@ -137,6 +135,7 @@ Tabla Tech Tickets: contiene si hay tickets administrativos o no y su ID
 - PK: Tech Tickets ID: segmentación de Tech Tickets, representa si hay tickets técnicos, o no, con valores numéricos (1 o 2).
 - Tech Tickets General: representa en palabras el significado de los valores numéricos de Tech Tickets ID.
 
+---
 
 # Campos
 
@@ -217,6 +216,7 @@ Tabla AdminTickets
 |AdminticketsID|	Int|	PK|
 |Admin Tickets General|	Varchar|	-| 
 
+---
 
 # Transformación de datos
 En Power Bi se realizó una transformación de datos y reorganización del DER para mejorar su funcionamiento. Cabe destacar que la organización y división en tablas de la base de datos ya se realizó previamente en excel de acuerdo al primer DER presentado.
@@ -372,6 +372,11 @@ Por su parte en la solapa Facturacion, ademas de los elementos ya descriptos ant
 Por último en la solapa, llamada Análisis de Servicios, se muestra una representación de los servicios que tienen contratados los clientes, con la opción de filtrarlos mediante tres segmentadores de datos.
 
 <img width="685" alt="servicios 1" src="https://github.com/ramirodelavega/Analisis-De-Clientes/assets/140906094/99905e92-0c8c-4a3f-87cf-a66731065697">
+
+---
+# Conclusion 
+
+Como se muestra en el tablero, en el presente proyecto se analizaron diferentes variables que segun el objetivo de la empresa y/o areas de la misma se extraera la informacion pertinente para su posterior analisis en profundidad. En particular se profundizo en las variables de Riesgo de Abandono, Genero y Tipo de Contrato, y su el resultado posterior a filtrar o segmentar de acuerdo a las mismas. 
 
 ---
 
