@@ -167,6 +167,206 @@ Tabla Servicios
 |RiesgoAbandono|	Varchar|	FK|
 
 
+Tabla Facturación
+|Campo|Tipo de Campo|Clave|
+|-----|-------------|-----|
+|ClienteID|	Int, Varhcar|	FK|
+|ContratoID|	Int|	FK|
+|FacturacionSinPapel|	Varchar|	-|
+|MetodoPagoID|	Int|	FK|
+|CargoMensual|	Decimal|	PK|
+|CargoTotal|	Decimal|	PK|
+
+Tabla Reclamos
+|Campo|Tipo de Campo|Clave|
+|-----|-------------|-----|
+|ClienteID|	Int, Varchar|	FK|
+|AdminTickets|	Int|	-|
+|TechTickets|	Int|	-|
+|AdminTicketsID|	Int|	FK|
+|AdminTicketsID|	Int|	FK|
+
+
+Tabla Contrato		
+|Campo|Tipo de Campo|Clave|
+|-----|-------------|-----|
+|ContratoID|	Int|	PK|
+|TipoContrato|	Varchar|	-|
+		
+Tabla MetodoPago		
+|Campo|Tipo de Campo|Clave|
+|-----|-------------|-----|
+|MetodoPagoID|	Int|	PK|
+|TipoContrato|	Varchar|	-|
+		
+Tabla Internet	
+|Campo|Tipo de Campo|Clave|
+|-----|-------------|-----|
+|InternetID|	Int|	PK|
+|TipoInternet|	Varchar|	-|
+
+Tabla TechTickets		
+|Campo|Tipo de Campo|Clave|
+|-----|-------------|-----|
+|TechTicketsID|	Int|	PK|
+|Tech Tickets General|	Varchar|	-| 
+		
+Tabla AdminTickets		
+|Campo|Tipo de Campo|Clave|
+|-----|-------------|-----|
+|AdminticketsID|	Int|	PK|
+|Admin Tickets General|	Varchar|	-| 
+
+
+# Transformación de datos
+En Power Bi se realizó una transformación de datos y reorganización del DER para mejorar su funcionamiento. Cabe destacar que la organización y división en tablas de la base de datos ya se realizó previamente en excel de acuerdo al primer DER presentado.
+- Se normalizo las tablas Internet, MetodoPago y Contrato eliminando duplicados.
+- Se eliminó de la tabla Servicios las columnas CargoMensual, CargoTotal y RiesgoAbandono ya que implicaba una relación de muchos a muchos con datos repetidos en otras tablas.
+- En la tabla Reclamos, columna RiesgoAbandono se reemplazó los valores “Yes” y “No” por “1” y “2” y se modificó el nombre de la tabla a RiesgoAbandonoID(FK). Así mismo, se creó otra tabla llamada RiesgoAbandono en donde se encuentran las columnas RiesgoAbandonoID (PK) y RiesgoAbandono.
+`=Table.ReplaceValue(#"Tipocambiado","Yes","1",Replacer.ReplaceText,{"RiesgoAbandono"})`
+`=Table.ReplaceValue(#"Valorreemplazado","No","2",Replacer.ReplaceText,{"RiesgoAbandono"})` 
+- Dentro de la Tabla Clientes se agregó una nueva columna llamada Suscripción, en la cual se buscó agrupar los valores de la columna Tenencia expresada en meses a esta nueva columna expresa en años.
+`Suscripción = SWITCH(TRUE(),
+[tenencia] < 12, "<1 año",
+[tenencia] < 24, "<2 años",
+[tenencia] < 48, "<3 años",
+[tenencia] < 60, "<4 años",
+[tenencia] < 72, "<5 años",
+"Más de 5 años")`
+- Se creó la Tabla medidas para agregar todas las medidas calculadas dentro de la misma.
+- En la tabla Clientes, columna Género, se reemplazó los valores “Female” y “Male” por “Femenino” y “Masculino” respectivamente.
+- Se reemplazaron todos los valores en inglés por su traducción en español.
+- Con el objetivo de diferenciar los clientes que tienen Admin Tickets y los que no, en la tabla Reclamos, se duplicó la columna Admin Tickets, generando una nueva columna llamada Admin Tickets ID (FK). Luego se reemplazaron los valores distintos de cero por el valor 1. Además se creó una nueva tabla, llamada Admin Tickets, en donde se duplicó la columna Admin Tickets ID de la tabla Reclamos, luego se elimino los duplicados, para poder identificarla como PK. Además, se creó una segunda columna llamada Admin Tickets General, en donde se especifica “Sin Admin Tickets” o “Con Admin Tickets”.
+- Con el objetivo de diferenciar los clientes que tienen TechTickets y los que no, en la tabla Reclamos, se duplicó la columna TechTickets, generando una nueva columna llamada Tech Tickets ID (FK). Luego se reemplazaron los valores distintos de cero por el valor 1. Además se creó una nueva tabla, llamada Tech Tickets, en donde se duplicó la columna Tech Tickets ID de la tabla Reclamos, luego se elimino los duplicados, para poder identificarla como PK. Además, se creó una segunda columna llamada Tech Tickets General, en donde se especifica “Sin Tech Tickets” o “Con Tech Tickets”.
+
+---
+
+# Medidas
+
+- Total Clientes: total de clientes
+`Total Clientes = CALCULATE(COUNT(Clientes[ClienteID]))`
+- Suma Cargo Total: suma del cargo total de todos los clientes.
+`Suma Cargo Total = CALCULATE(SUM(Facturacion[CargoTotal]))`
+- Suma Cargo Mensual: suma del cargo mensual de todos los clientes.
+`Suma Cargo Mensual = CALCULATE(SUM(Facturacion[CargoMensual]))`
+- Contador Riesgo Abandono: cantidad de clientes que están en riesgo de rescindir de los servicios de la compañía.
+`Contador Riesgo Abandono = CALCULATE(COUNTROWS(FILTER(Reclamos,Reclamos[RiesgoAbandonoID] =1)))`
+- % Riesgo Abandono: porcentaje que representa la cantidad de clientes que están en riesgo de rescindir de los servicios de la compañía con respecto del total.
+`% Riesgo Abandono = DIVIDE(Medidas[Contador Riesgo Abandono], Medidas[TotalClientes])`
+- Hombres: Cantidad de clientes que son hombres
+`Hombres = CALCULATE(COUNTROWS(FILTER(Clientes, Clientes[Genero] ="Masculino")))`
+- Mujeres: Cantidad de clientes que son mujeres
+`Mujeres = CALCULATE(COUNTROWS(FILTER(Clientes, Clientes[Genero] ="Femenino")))`
+- Total Ciudadano Mayor: total de ciudadanos mayores
+`Total Ciudadano Mayor = CALCULATE(COUNTROWS(FILTER(Clientes,Clientes[CiudadanoMayor] = 1)))`
+- % Ciudadano Mayor: porcentaje que representa la cantidad de clientes que son ciudadanos mayores con respecto del total de clientes.
+`% Ciudadano Mayor = DIVIDE(Medidas[Total Ciudadano Mayor], Medidas[TotalClientes])`
+- Con Pareja: cantidad de clientes que estan en pareja
+`Con Pareja = CALCULATE(COUNTROWS(FILTER(Clientes, Clientes[Pareja] ="Yes")))`
+- Con dependientes: cantidad de clientes que tienen a cargo otras personas.
+`Con Dependientes = CALCULATE(COUNTROWS(FILTER(Clientes,Clientes[Dependientes] = "Yes")))`
+- % Con Pareja: porcentaje que representa la cantidad de clientes que están en pareja con respecto del total de clientes.
+`% Con Pareja = DIVIDE(Medidas[Con Pareja],[Total Clientes])`
+- % Con dependientes: porcentaje que representa la cantidad de clientes que tienen a cargo otras personas (ej. hijos) con respecto del total de clientes.
+`% Con Dependientes = CALCULATE(DIVIDE(Medidas[Con Dependientes], [TotalClientes]))`
+- <1 año: clientes que reciben los servicios de la compañía por menos de un año.
+`<1 año = CALCULATE(COUNTROWS(FILTER(Clientes, Clientes[Suscripción] = "<1año")))`
+- <2 años: clientes que reciben los servicios de la compañía desde hace más de un año y menos de dos.
+`<2 años = CALCULATE(COUNTROWS(FILTER(Clientes, Clientes[Suscripción] = "<2años")))`
+- <3 años: clientes que reciben los servicios de la compañía desde hace más de dos años y menos de tres..
+`<3 años = CALCULATE(COUNTROWS(FILTER(Clientes, Clientes[Suscripción] = "<3años")))`
+<4 años: clientes que reciben los servicios de la compañía desde hace más de tres
+años y menos de cuatro.
+<4 años = CALCULATE(COUNTROWS(FILTER(Clientes, Clientes[Suscripción] = "<4
+años")))
+- <5 años: clientes que reciben los servicios de la compañía desde hace más de cuatro años y menos de cinco..
+`<5 años = CALCULATE(COUNTROWS(FILTER(Clientes, Clientes[Suscripción] = "<5años")))`
+- Más de 5 años: clientes que reciben los servicios de la compañía desde hace más de 5 años.
+`Más de 5 años = CALCULATE(COUNTROWS(FILTER(Clientes, Clientes[Suscripción]= "Más de 5 años")))`
+- Promedio Cargo Mensual: promedio del cargo mensual
+`Promedio Cargo Mensual = CALCULATE(DIVIDE([Suma Cargo Mensual], [TotalClientes]))`
+- Promedio Cargo Total: promedio del cargo total
+`Promedio Cargo Total = CALCULATE(DIVIDE([Suma Cargo Total], [Total Clientes])`
+- Mes a Mes: cantidad de clientes que tienen contrato mensual.
+`Mes a Mes = CALCULATE(COUNTROWS(FILTER(Facturacion,Facturacion[ContratoID] = 1)))`
+- Un año: cantidad de clientes que tienen contrato por un año.
+`Un año = CALCULATE(COUNTROWS(FILTER(Facturacion, Facturacion[ContratoID] =2)))`
+- Dos años: cantidad de clientes que tienen contrato por dos años.
+`Dos Años = CALCULATE(COUNTROWS(FILTER(Facturacion,Facturacion[ContratoID] = 3)))`
+- Credit Card: clientes que pagan su factura con tarjeta de crédito
+`Credit Card = CALCULATE(COUNTROWS(FILTER(Facturacion,Facturacion[MetodoPagoID] = 4)))`
+- Electronic Check: Clientes que pagan su factura con cheque electrónico.
+`Electronic Check = CALCULATE(COUNTROWS(FILTER(Facturacion,Facturacion[MetodoPagoID] = 1)))`
+- Bank Transfer: clientes que pagan su factura con transferencia bancaria
+BankTransfer = CALCULATE(COUNTROWS(FILTER(Facturacion,
+Facturacion[MetodoPagoID] = 3)))
+- Mailed check: clientes que pagan su factura con cheque enviado por correo.
+`Mailed Check = CALCULATE(COUNTROWS(FILTER(Facturacion,Facturacion[MetodoPagoID] = 2)))`
+- FC Con Papel: factura impresa en papel
+`FC Con Papel = CALCULATE(COUNTROWS(FILTER(Facturacion,Facturacion[FacturacionSinPapel] = "No")))`
+- FC Sin Papel: factura no impresa en papel, enviada por otros medios electrónicos
+`FC Sin Papel = CALCULATE(COUNTROWS(FILTER(Facturacion,Facturacion[FacturacionSinPapel] = "Yes")))`
+- Con Serv. Telefónico: clientes suscriptos al servicio telefónico.
+`Con Serv. Telefonico = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[ServicioTelefonico] = "Yes")))`
+- No Serv. Telefonico: clientes que no estan suscriptos al servicio telefónico.
+`No Serv. Telefonico = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[LineasMultiples] = "No phone service")))`
+- Si Lin. Multiples: clientes que cuentan con líneas múltiples.
+`Si Lineas Multiples = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[LineasMultiples] = "Yes")))`
+- No Lin. Múltiples: Clientes que no cuentan con líneas multiples
+`No Lin. Multiples = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[LineasMultiples] = "No")))`
+- DSL: clientes que cuentan con servicio de internet mediante DSL
+`DSL = COUNTROWS(FILTER(Servicios, Servicios[InternetID] = 1))
+- Fiber Optic: clientes que cuentan con servicio de internet mediante fibra óptica
+`Fiber Optic = COUNTROWS(FILTER(Servicios, Servicios[InternetID] = 2))`
+- Con Streaming Movies: Clientes que cuentan con el servicio de streaming movies.
+Con Streaming Movies = CALCULATE(COUNTROWS(FILTER(Servicios,
+Servicios[StreamingMovies] = "Yes")))
+- Con Streaming TV: Clientes que cuentan con el servicio de streaming TV
+`Con Streaming TV = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[StreamingTV] = "Yes")))`
+- No Internet: Clientes que no cuentan con el servicio de internet contratado.
+`No Internet = COUNTROWS(FILTER(Servicios, Servicios[InternetID] = 3))`
+- Sin Streaming Movies: Clientes que no cuentan con el servicio de streaming movies.
+`Sin Streaming Movies = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[StreamingMovies] = "No")))`
+- Sin Streaming Tv: Clientes que no cuentan con el servicio de streaming TV
+`Sin Streaming TV = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[StreamingTV] = "No")))`
+- Con Soporte Tecnico: clientes que cuentan con el servicio de soporte técnico
+`Con Soporte Tecnico = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[SoporteTecnico] = "Yes")))`
+- Sin Soporte Técnico: clientes que no cuentan con el servicio de soporte técnico
+`Sin Soporte Tecnico = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[SoporteTecnico] = "No")))`
+- Con Protección del Dispositivo: clientes que cuentan con protección para sus dispositivos móviles.
+`Con Proteccion del Dispositivo = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[ProteccionDispositivo] = "Yes")))`
+- Sin Protección del Dispositivo: clientes que no cuentan con protección para sus dispositivos móviles.
+`Sin Proteccion del Dispositivo = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[ProteccionDispositivo] = "No")))`
+- Con Seguridad Online: clientes que cuentan con el servicio de seguridad online
+`Con Seguridad Online = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[SeguridadOnline] = "Yes")))`
+- Sin Seguridad Online: clientes que no cuentan con el servicio de seguridad online
+`Sin Seguridad Online = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[SeguridadOnline] = "No")))`
+- Con Backup Online: clientes que cuentan con el servicio de backup online.
+`Con Backup Online = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[BackupOnline] = "Yes")))`
+- Sin Backup Online: clientes que no cuentan con el servicio de backup online.
+`Sin Backup Online = CALCULATE(COUNTROWS(FILTER(Servicios,Servicios[BackupOnline] = "No")))`
+- Total Tickets: suma de la cantidad de tickets abiertos de administración y sistemas.
+`Total Tickets = SUMX(Reclamos, Reclamos[Admin Tickets ID]+Reclamos[TechTickets ID])`
+
+---
+
+# Dashboard
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
